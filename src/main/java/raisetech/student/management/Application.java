@@ -2,12 +2,11 @@ package raisetech.student.management;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.tomcat.util.codec.binary.StringUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
@@ -28,6 +27,11 @@ public class Application {
 		return name + "さん " + age + "歳";
 	}
 
+	@GetMapping("/studentMap")
+	public Map<String, Integer> studentMap() {
+		return student;
+	}
+
 	@PostMapping("/studentInfo")
 	public void studentInfo(String name, int age) {
 		this.name = name;
@@ -44,9 +48,15 @@ public class Application {
 		this.age = age;
 	}
 
-	@GetMapping("/studentMap")
-	public Map<String, Integer> studentMap() {
-		return student;
+	@PostMapping("/updateStudentInfo")
+	public void updateStudentInfo(@RequestParam(required = false) String name,
+			@RequestParam(required = false) Integer age) {
+		if (name != null) {
+			this.name = name;
+		}
+		if (age != null) {
+			this.age = age;
+		}
 	}
 
 	@PostMapping("/studentMap")
@@ -54,8 +64,8 @@ public class Application {
 		student.put(name, age);
 	}
 
-	@PostMapping("/studentMapName")
-	public void studentMapName(String before, String after) {
+	@PostMapping("/updateStudentMap")
+	public void updateStudentMapName(String before, String after) {
 		if (student.containsKey(before)) {
 			int age = student.get(before);
 			student.remove(before);
