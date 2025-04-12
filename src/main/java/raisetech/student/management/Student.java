@@ -1,5 +1,6 @@
 package raisetech.student.management;
 
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,6 +16,7 @@ public class Student {
   private int age;
   private String gender;
 }
+
 
 
 
