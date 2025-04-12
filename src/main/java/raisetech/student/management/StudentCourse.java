@@ -11,5 +11,5 @@ public class StudentCourse {
   private int studentId; // 'student_id' フィールド
   private String courseName;  // 'course_name' フィールド
   private Date startDate;  // 'start_date' フィールド
-  private Date sceduledEndDate;  // 'sceduled_end_date' フィールド
+  private Date scheduledEndDate;  // 'scheduled_end_date' フィールド
 }
