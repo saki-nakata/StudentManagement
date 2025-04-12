@@ -27,7 +27,6 @@ public class Application {
 	@GetMapping("/studentList")
 	public List<Student> getStudentList() {
 		return repository.studentSearch();
-
 	}
 
 	@GetMapping("/courseList")
