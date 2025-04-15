@@ -12,6 +12,7 @@ import raisetech.student.management.service.StudentService;
 public class StudentController {
 
   private StudentService service;
+
   @Autowired
   public StudentController(StudentService service) {
     this.service = service;
