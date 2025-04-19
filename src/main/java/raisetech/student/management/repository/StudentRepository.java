@@ -16,16 +16,18 @@ public interface StudentRepository {
 
   /**
    * 全件検索
+   *
    * @return 受講生情報の一覧
    */
   @Select("SELECT * FROM students")
-  List<Student> studentSearch();
+  List<Student> searchStudent();
 
   /**
    * 全件検索
+   *
    * @return 受講生コース情報の一覧
    */
   @Select("SELECT * FROM students_courses")
-  List<StudentCourse> courseSearch();
+  List<StudentCourse> searchCourse();
 
 }
