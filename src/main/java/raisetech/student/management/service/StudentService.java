@@ -8,7 +8,6 @@ import raisetech.student.management.repository.StudentRepository;
 
 @Service
 public class StudentService {
-
   private StudentRepository repository;
 
   public StudentService(StudentRepository repository) {
@@ -16,11 +15,17 @@ public class StudentService {
   }
 
   public List<Student> searchStudentList() {
-    return repository.searchStudent();
+    List<Student> student = repository.studentSearch();
+    return student.stream()
+        .filter(age -> age.getAge() >= 30 && age.getAge() <= 39)
+        .toList();
   }
 
   public List<StudentCourse> searchCourseList() {
-    return repository.searchCourse();
+    List<StudentCourse> course = repository.courseSearch();
+    return course.stream()
+        .filter(name -> name.getCourseName().equals("Javaコース"))
+        .toList();
   }
 
 }
