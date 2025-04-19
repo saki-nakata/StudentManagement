@@ -7,6 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class StudentCourse {
+
   private int id;
   private int studentId; // 'student_id' フィールド
   private String courseName;  // 'course_name' フィールド

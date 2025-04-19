@@ -16,6 +16,7 @@ public interface StudentRepository {
 
   /**
    * 全件検索
+   *
    * @return 受講生情報の一覧
    */
   @Select("SELECT * FROM students")
@@ -23,6 +24,7 @@ public interface StudentRepository {
 
   /**
    * 全件検索
+   *
    * @return 受講生コース情報の一覧
    */
   @Select("SELECT * FROM students_courses")
