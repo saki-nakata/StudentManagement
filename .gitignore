@@ -1,4 +1,6 @@
-HELP.md
+*.md       # Markdownファイル全体を無視したい場合
+!HELP.md   # ただしHELP.mdはGitで追跡したい
+
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
