@@ -72,7 +72,7 @@ public class StudentController {
       System.out.println("重複エラー " + e.getMessage());
       return "registerStudent";
     } catch (Exception e) {
-      System.out.println("例外が発生 " + e.getMessage());
+      System.out.println("例外発生 " + e.getMessage());
       return "registerStudent";
     }
     System.out.println("登録成功しました!");
