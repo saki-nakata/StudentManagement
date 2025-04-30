@@ -10,6 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import raisetech.student.management.controller.converter.StudentConverter;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
@@ -36,9 +37,27 @@ public class StudentController {
     return "studentList";
   }
 
-  @GetMapping("/courseList")
-  public List<StudentCourse> getCourseList() {
-    return service.searchCourseList();
+  @GetMapping("/updateStudent")
+  public String getStudentInfo(@RequestParam int id, Model model) {
+    StudentDetail studentDetail = service.getStudentInfo(id);
+    model.addAttribute("studentDetail", studentDetail);
+    return "updateStudent";
+  }
+
+  @PostMapping("/updateStudent")
+  public String updateStudent(@ModelAttribute("studentDetail") StudentDetail studentDetail,
+      BindingResult result) {
+    if (result.hasErrors()) {
+      return "updateStudent";
+    }
+    try {
+      service.updateStudent(studentDetail);
+    } catch (Exception e) {
+      System.out.println("例外発生 " + e.getMessage());
+      return "updateStudent";
+    }
+    System.out.println("更新成功しました!");
+    return "redirect:/studentList";
   }
 
   @GetMapping("/newStudent")
@@ -46,16 +65,13 @@ public class StudentController {
     Student student = new Student();
     student.setAge(30);
     student.setGender("その他");
-
     StudentCourse course = new StudentCourse();
     course.setCourseName("");
     List<StudentCourse> courseList = new ArrayList<>();
     courseList.add(course);
-
     StudentDetail studentDetail = new StudentDetail();
     studentDetail.setStudent(student);
     studentDetail.setStudentCourse(courseList);
-
     model.addAttribute("studentDetail", studentDetail);
     return "registerStudent";
   }
@@ -67,7 +83,7 @@ public class StudentController {
       return "registerStudent";
     }
     try {
-      service.insertStudentList(studentDetail);
+      service.registerStudent(studentDetail);
     } catch (DuplicateKeyException e) {
       System.out.println("重複エラー " + e.getMessage());
       return "registerStudent";
@@ -77,7 +93,6 @@ public class StudentController {
     }
     System.out.println("登録成功しました!");
     return "redirect:/studentList";
-
   }
 
 }
