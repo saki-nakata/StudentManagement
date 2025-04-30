@@ -49,10 +49,7 @@ public class StudentService {
   public StudentDetail getStudentInfo(int id) {
     Student student = repository.getStudentInfo(id);
     List<StudentCourse> courseList = repository.getCourseInfo(id);
-    StudentDetail detail = new StudentDetail();
-    detail.setStudent(student);
-    detail.setStudentCourse(courseList);
-    return detail;
+    return new StudentDetail(student,courseList);
   }
 
   @Transactional
