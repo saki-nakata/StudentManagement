@@ -17,19 +17,32 @@
     <th>年齢</th>
     <th>性別</th>
     <th>備考</th>
+    <th>コース名</th>
+    <th>受講開始日</th>
+    <th>終了予定日</th>
   </tr>
   </thead>
   <tbody>
   <tr th:each="studentDetail : ${studentList}">
     <td th:text="${studentDetail.student.id}">1</td>
-    <td th:text="${studentDetail.student.fullName}">仲田 沙季</td>
+    <td><a th:href="@{/updateStudent(id=${studentDetail.student.id})}"
+           th:text="${studentDetail.student.fullName}">仲田 沙季</a></td>
     <td th:text="${studentDetail.student.furigana}">なかた さき</td>
     <td th:text="${studentDetail.student.nickname}">Saki</td>
     <td th:text="${studentDetail.student.emailAddress}">saki@example.com</td>
     <td th:text="${studentDetail.student.liveCity}">長野</td>
     <td th:text="${studentDetail.student.age}">34</td>
     <td th:text="${studentDetail.student.gender}">女性</td>
-    <td th:text="${studentDetail.student.remark}">本人</td>
+    <td th:text="${studentDetail.student.remark}">転職希望</td>
+    <td colspan="3">
+      <ul>
+        <li th:each="course : ${studentDetail.studentCourse}">
+          <span th:text="${course.courseName}">Javaコース</span>：
+          <span th:text="${course.startDate}">2025/5/1</span>〜
+          <span th:text="${course.scheduledEndDate}">2025/11/1</span>
+        </li>
+      </ul>
+    </td>
   </tr>
   </tbody>
 </table>
