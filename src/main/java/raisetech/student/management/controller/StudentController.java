@@ -69,9 +69,7 @@ public class StudentController {
     course.setCourseName("");
     List<StudentCourse> courseList = new ArrayList<>();
     courseList.add(course);
-    StudentDetail studentDetail = new StudentDetail();
-    studentDetail.setStudent(student);
-    studentDetail.setStudentCourse(courseList);
+    StudentDetail studentDetail = new StudentDetail(student, courseList);
     model.addAttribute("studentDetail", studentDetail);
     return "registerStudent";
   }
