@@ -20,7 +20,7 @@ public interface StudentRepository {
    *
    * @return 受講生情報の一覧
    */
-  @Select("SELECT * FROM students WHERE deleted='false'")
+  @Select("SELECT * FROM students")
   List<Student> searchStudent();
 
   /**
@@ -31,27 +31,32 @@ public interface StudentRepository {
   @Select("SELECT * FROM students_courses")
   List<StudentCourse> searchCourse();
 
-  @Insert("INSERT INTO students (full_name, furigana, nickname, email_address, live_city, age, gender, remark, deleted) VALUES (#{fullName}, #{furigana}, #{nickname}, #{emailAddress}, #{liveCity}, #{age}, #{gender}, #{remark}, #{deleted})")
+  @Insert(
+      "INSERT INTO students (full_name, furigana, nickname, email_address, live_city, age, gender, remark, is_deleted) "
+          + "VALUES (#{fullName}, #{furigana}, #{nickname}, #{emailAddress}, #{liveCity}, #{age}, #{gender}, #{remark}, #{isDeleted})")
   @Options(useGeneratedKeys = true, keyProperty = "id")
   int registerStudent(Student student);
 
-  @Insert("INSERT INTO students_courses (student_id, course_name, start_date, scheduled_end_date) VALUES (#{studentId}, #{courseName}, #{startDate}, #{scheduledEndDate})")
+  @Insert("INSERT INTO students_courses (student_id, course_name, start_date, scheduled_end_date) "
+      + "VALUES (#{studentId}, #{courseName}, #{startDate}, #{scheduledEndDate})")
   @Options(useGeneratedKeys = true, keyProperty = "id")
   int registerCourse(StudentCourse course);
 
-  @Select("SELECT * FROM students WHERE id=#{id}")
+  @Select("SELECT * FROM students WHERE id = #{id}")
   Student getStudentInfo(int id);
 
-  @Select("SELECT * FROM students_courses WHERE student_id=#{studentId}")
+  @Select("SELECT * FROM students_courses WHERE student_id = #{studentId}")
   List<StudentCourse> getCourseInfo(int studentId);
 
   @Update(
-      "UPDATE students SET full_name=#{fullName}, furigana=#{furigana}, email_address=#{emailAddress}, live_city=#{liveCity},age=#{age}, gender=#{gender}, remark=#{remark}, deleted=#{deleted}"
-          + " WHERE id=#{id}")
+      "UPDATE students SET full_name = #{fullName}, furigana = #{furigana}, email_address = #{emailAddress}, "
+          + "live_city = #{liveCity},age = #{age}, gender = #{gender}, remark = #{remark}, is_deleted = #{isDeleted} "
+          + "WHERE id = #{id}")
   int updateStudent(Student student);
 
   @Update(
-      "UPDATE students_courses SET course_name=#{courseName}, start_date=#{startDate}, scheduled_end_date=#{scheduledEndDate}"
-          + " WHERE id=#{id}")
+      "UPDATE students_courses SET course_name = #{courseName}, start_date = #{startDate}, scheduled_end_date = #{scheduledEndDate} "
+          + "WHERE id = #{id}")
   int updateCourse(StudentCourse course);
+
 }
