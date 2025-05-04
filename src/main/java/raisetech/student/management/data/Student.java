@@ -16,7 +16,7 @@ public class Student {
   private int age;
   private String gender;
   private String remark;
-  private boolean isDeleted; // 'is_deleted'
+  private boolean isDeleted;
 }
 
 

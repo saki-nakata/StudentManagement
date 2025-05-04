@@ -17,6 +17,7 @@
     <th>年齢</th>
     <th>性別</th>
     <th>備考</th>
+    <th>キャンセル</th>
     <th>コース名</th>
     <th>受講開始日</th>
     <th>終了予定日</th>
@@ -24,22 +25,24 @@
   </thead>
   <tbody>
   <tr th:each="studentDetail : ${studentList}">
-    <td th:text="${studentDetail.student.id}">1</td>
+    <td id="id" th:text="${studentDetail.student.id}">1</td>
     <td><a th:href="@{/updateStudent(id=${studentDetail.student.id})}"
-           th:text="${studentDetail.student.fullName}">仲田 沙季</a></td>
-    <td th:text="${studentDetail.student.furigana}">なかた さき</td>
-    <td th:text="${studentDetail.student.nickname}">Saki</td>
-    <td th:text="${studentDetail.student.emailAddress}">saki@example.com</td>
-    <td th:text="${studentDetail.student.liveCity}">長野</td>
-    <td th:text="${studentDetail.student.age}">34</td>
-    <td th:text="${studentDetail.student.gender}">女性</td>
-    <td th:text="${studentDetail.student.remark}">転職希望</td>
+           id="fullName" th:text="${studentDetail.student.fullName}">仲田 沙季</a></td>
+    <td id="furigana" th:text="${studentDetail.student.furigana}">なかた さき</td>
+    <td id="nickname" th:text="${studentDetail.student.nickname}">Saki</td>
+    <td id="emailAddress" th:text="${studentDetail.student.emailAddress}">saki@example.com</td>
+    <td id="liveCity" th:text="${studentDetail.student.liveCity}">長野</td>
+    <td id="age" th:text="${studentDetail.student.age}">34</td>
+    <td id="gender" th:text="${studentDetail.student.gender}">女性</td>
+    <td id="remark" th:text="${studentDetail.student.remark}">転職希望</td>
+    <td><input type="checkbox" id="isDeleted" th:checked="${studentDetail.student.isDeleted}"
+               disabled/></td>
     <td colspan="3">
       <ul>
         <li th:each="course : ${studentDetail.studentCourse}">
-          <span th:text="${course.courseName}">Javaコース</span>：
-          <span th:text="${course.startDate}">2025/5/1</span>〜
-          <span th:text="${course.scheduledEndDate}">2025/11/1</span>
+          <span id="courseName" th:text="${course.courseName}">Javaコース</span>：
+          <span id="startDate" th:text="${course.startDate}">2025/5/1</span>〜
+          <span id="scheduledEndDate" th:text="${course.scheduledEndDate}">2025/11/1</span>
         </li>
       </ul>
     </td>
