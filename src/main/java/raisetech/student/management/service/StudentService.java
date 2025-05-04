@@ -49,7 +49,7 @@ public class StudentService {
   public StudentDetail getStudentInfo(int id) {
     Student student = repository.getStudentInfo(id);
     List<StudentCourse> courseList = repository.getCourseInfo(id);
-    return new StudentDetail(student,courseList);
+    return new StudentDetail(student, courseList);
   }
 
   @Transactional
@@ -62,10 +62,6 @@ public class StudentService {
     }
     //todo；受講生コース情報の更新
     for (StudentCourse course : studentDetail.getStudentCourse()) {
-      course.setStudentId(student.getId());
-      course.setCourseName(course.getCourseName());
-      course.setStartDate(course.getStartDate());
-      course.setScheduledEndDate(course.getStartDate().plusMonths(6));
       int updateCourse = repository.updateCourse(course);
       if (updateCourse == 0) {
         throw new RuntimeException("students_coursesテーブルでの更新処理");

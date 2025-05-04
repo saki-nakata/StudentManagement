@@ -43,10 +43,15 @@
     <input type="text" id="remark" th:field="*{student.remark}" maxlength="100"
            style="width: 400px;"/>
   </div>
+  <div>
+    <label for="isDeleted">キャンセル:</label>
+    <input type="checkbox" id="isDeleted" th:field="*{student.deleted}"/>
+  </div>
   <div th:each="course, stat : *{studentCourse}">
+    <input type="hidden" th:field="*{studentCourse[__${stat.index}__].id}"/>
     <div>
       <label>コース名：</label>
-      <select th:field="*{studentCourse[__${stat.index}__].courseName}" required>
+      <select id="courseName" th:field="*{studentCourse[__${stat.index}__].courseName}" required>
         <option value="" disabled>選択してください</option>
         <option value="Javaコース">Javaコース</option>
         <option value="AWSコース">AWSコース</option>
@@ -57,11 +62,13 @@
     </div>
     <div>
       <label>受講開始日:</label>
-      <input type="date" th:field="*{studentCourse[__${stat.index}__].startDate}" required/>
+      <input type="date" id="startDate" th:field="*{studentCourse[__${stat.index}__].startDate}"
+             required/>
     </div>
     <div>
       <label>終了予定日:</label>
-      <input type="date" th:field="*{studentCourse[__${stat.index}__].scheduledEndDate}" required/>
+      <input type="date" id="scheduledEndDate"
+             th:field="*{studentCourse[__${stat.index}__].scheduledEndDate}" required/>
     </div>
   </div>
   <div style="margin-top: 16px;">
