@@ -95,7 +95,10 @@ public class StudentService {
     //todo；新規受講生情報の更新
     repository.updateStudent(student);
     //todo；受講生コース情報の更新
-    studentDetail.getStudentCourseList().forEach(course -> repository.updateCourse(course));
+    studentDetail.getStudentCourseList().forEach(course -> {
+      course.setStudentId(student.getId());
+      repository.updateCourse(course);
+    });
   }
 
 }

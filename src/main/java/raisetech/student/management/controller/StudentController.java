@@ -59,9 +59,10 @@ public class StudentController {
    * @return 実行結果
    */
   @PutMapping("/updateStudent")
-  public ResponseEntity<String> updateStudent(@RequestBody @Valid StudentDetail studentDetail) {
+  public ResponseEntity<StudentDetail> updateStudent(
+      @RequestBody @Valid StudentDetail studentDetail) {
     service.updateStudent(studentDetail);
-    return ResponseEntity.ok("更新成功しました!");
+    return ResponseEntity.ok(studentDetail);
   }
 
   /**
@@ -73,8 +74,6 @@ public class StudentController {
   @PostMapping("/registerStudent")
   public ResponseEntity<StudentDetail> registerStudent(
       @RequestBody @Valid StudentDetail studentDetail) {
-    System.out.println("ok");
-    System.out.println(studentDetail.getStudent().getId());
 
     service.registerStudent(studentDetail);
     return ResponseEntity.ok(studentDetail);

@@ -3,7 +3,7 @@ package raisetech.student.management.data;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,11 +14,11 @@ public class Student {
 
   private int id;
 
-  @NotNull(message = "名前を入力してください。")
+  @NotBlank(message = "名前を入力してください。")
   @Size(max = 30, message = "30桁以内で入力してください。")
   private String fullName;// 'full_name' フィールド
 
-  @NotNull(message = "ふりがなを入力してください。")
+  @NotBlank(message = "ふりがなを入力してください。")
   @Size(max = 50, message = "50桁以内で入力してください。")
   private String furigana;
 
@@ -26,7 +26,7 @@ public class Student {
   private String nickname;
 
   @Email(message = "有効なメールアドレスの形式ではありません。")
-  @NotNull(message = "メールアドレスを入力してください。")
+  @NotBlank(message = "メールアドレスを入力してください。")
   @Size(max = 30, message = "30桁以内で入力してください。")
   private String emailAddress; // 'email_address'
 
@@ -37,7 +37,7 @@ public class Student {
   @Max(value = 100, message = "100以下の数値にしてください。")
   private int age;
 
-  @NotNull(message = "性別を入力してください。")
+  @NotBlank(message = "性別を入力してください。")
   private String gender;
 
   @Size(max = 100, message = "100桁以内で入力してください。")

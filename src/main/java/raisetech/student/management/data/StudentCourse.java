@@ -1,5 +1,6 @@
 package raisetech.student.management.data;
 
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
@@ -15,7 +16,7 @@ public class StudentCourse {
 
   private int studentId; // 'student_id' フィールド
 
-  @NotNull(message = "コース名を入力してください。")
+  @NotEmpty(message = "コース名を入力してください。")
   @Size(max = 30, message = "30桁以内で入力してください。")
   private String courseName;  // 'course_name' フィールド
 
