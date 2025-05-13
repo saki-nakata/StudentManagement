@@ -27,10 +27,10 @@ repositories {
 dependencies {
     //SpringBoot
     implementation 'org.springframework.boot:spring-boot-starter-web'
-
     //Thymeleaf(SpringBoot)
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:3.4.4'
-
+    //Validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation:3.4.5'
     //Apache Commons Lang・・・便利機能
     implementation 'org.apache.commons:commons-lang3:3.17.0'
 
