@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import raisetech.student.management.exception.TestException;
 import raisetech.student.management.domain.StudentDetail;
 import raisetech.student.management.service.StudentService;
 
@@ -73,10 +74,20 @@ public class StudentController {
    */
   @PostMapping("/registerStudent")
   public ResponseEntity<StudentDetail> registerStudent(
-      @RequestBody @Valid StudentDetail studentDetail) {
+      @RequestBody @Valid StudentDetail studentDetail) throws TestException {
 
     service.registerStudent(studentDetail);
     return ResponseEntity.ok(studentDetail);
+  }
+
+  /**
+   * 例外処理の動作確認をするためのテスト用メソッドです。
+   *
+   * @throws TestException テスト用の例外
+   */
+  @GetMapping("/testException")
+  public void testException() throws TestException {
+    throw new TestException("意図的に例外をスロー");
   }
 
 }
