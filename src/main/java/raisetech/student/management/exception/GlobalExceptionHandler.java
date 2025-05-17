@@ -15,8 +15,15 @@ public class GlobalExceptionHandler {
    * @return HTTP 400 と例外メッセージ
    */
   @ExceptionHandler(Exception.class)
-  public ResponseEntity<String> handleException(Exception ex) {
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("例外発生:" + ex.getMessage());
+  public ResponseEntity<ErrorMessage> handleException(Exception ex) {
+    HttpStatus status = HttpStatus.BAD_REQUEST;
+    ErrorMessage error = new ErrorMessage(
+        "例外発生:Exception",
+        status.value(),
+        status.name(),
+        "例外発生\n" + ex.getMessage()
+    );
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
   }
 
   /**
@@ -26,8 +33,15 @@ public class GlobalExceptionHandler {
    * @return HTTP 400 と例外メッセージ
    */
   @ExceptionHandler(TestException.class)
-  public ResponseEntity<String> handleTestException(TestException ex) {
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+  public ResponseEntity<ErrorMessage> handleTestException(TestException ex) {
+    HttpStatus status = HttpStatus.BAD_REQUEST;
+    ErrorMessage error = new ErrorMessage(
+        "例外発生:TestException",
+        status.value(),
+        status.name(),
+        ex.getMessage()
+    );
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
   }
 
 }
