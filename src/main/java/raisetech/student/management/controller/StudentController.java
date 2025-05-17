@@ -75,7 +75,6 @@ public class StudentController {
   @PostMapping("/registerStudent")
   public ResponseEntity<StudentDetail> registerStudent(
       @RequestBody @Valid StudentDetail studentDetail) throws TestException {
-
     service.registerStudent(studentDetail);
     return ResponseEntity.ok(studentDetail);
   }
