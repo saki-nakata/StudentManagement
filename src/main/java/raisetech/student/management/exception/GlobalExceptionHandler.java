@@ -18,10 +18,10 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ErrorMessage> handleException(Exception ex) {
     HttpStatus status = HttpStatus.BAD_REQUEST;
     ErrorMessage error = new ErrorMessage(
-        "例外発生:Exception",
+        "例外発生<Exception>",
         status.value(),
         status.name(),
-        "例外発生\n" + ex.getMessage()
+        ex.getMessage()
     );
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
   }
@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ErrorMessage> handleTestException(TestException ex) {
     HttpStatus status = HttpStatus.BAD_REQUEST;
     ErrorMessage error = new ErrorMessage(
-        "例外発生:TestException",
+        "例外発生<TestException>",
         status.value(),
         status.name(),
         ex.getMessage()
