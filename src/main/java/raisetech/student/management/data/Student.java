@@ -12,6 +12,7 @@ import lombok.Setter;
 @Setter
 public class Student {
 
+  @Max(value = 1000, message = "999以下の数値にしてください。")
   private int id;
 
   @NotBlank(message = "名前を入力してください。")

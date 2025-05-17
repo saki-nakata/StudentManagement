@@ -1,5 +1,6 @@
 package raisetech.student.management.data;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -12,8 +13,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Setter
 public class StudentCourse {
 
+  @Max(value = 1000, message = "999以下の数値にしてください。")
   private int id;
 
+  @Max(value = 1000, message = "999以下の数値にしてください。")
   private int studentId; // 'student_id' フィールド
 
   @NotEmpty(message = "コース名を入力してください。")
