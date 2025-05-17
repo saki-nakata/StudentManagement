@@ -9,7 +9,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ErrorMessage {
 
-  private String error;
   private int statusValue;
   private String statusName;
   private String message;
