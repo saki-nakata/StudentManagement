@@ -63,7 +63,7 @@ public class GlobalExceptionHandler {
   }
 
   /**
-   * データベースに重複するキーのレコードを挿入しようとした際の例外を処理する。
+   * アプリケーション内で発生した予期しない例外を処理する。
    *
    * @param ex 発生した例外
    * @return HTTP 500 と例外メッセージ
