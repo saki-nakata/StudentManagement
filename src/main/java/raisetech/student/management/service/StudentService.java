@@ -63,7 +63,7 @@ public class StudentService {
    * @param course  コース情報
    * @param student 受講生
    */
-  private void initStudentsCourse(StudentCourse course, Student student) {
+void initStudentsCourse(StudentCourse course, Student student) {
     course.setStudentId(student.getId());
     course.setCourseName(course.getCourseName());
     LocalDate startDate = course.getStartDate();

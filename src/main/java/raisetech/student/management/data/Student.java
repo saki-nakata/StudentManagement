@@ -6,12 +6,16 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Schema(description = "受講生情報")
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Student {
 
   @Schema(description = "受講生ID", minimum = "1", maximum = "999", example = "1", required = true)

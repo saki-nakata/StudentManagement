@@ -1,10 +1,9 @@
 package raisetech.student.management.service;
 
-
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -44,7 +43,7 @@ class StudentServiceTest {
   }
 
   @Test
-  void 受講生詳細の全件検索_リポジトリとコンバーターの検索処理が適切に呼び出せていること() {
+  void 受講生詳細の全件検索_リポジトリとコンバーターの一覧検索処理が適切に呼び出せていること() {
     List<Student> studentList = new ArrayList();
     List<StudentCourse> courseList = new ArrayList();
     Mockito.when(repository.searchStudent()).thenReturn(studentList);
@@ -55,6 +54,7 @@ class StudentServiceTest {
     Mockito.verify(repository, times(1)).searchStudent();
     Mockito.verify(repository, times(1)).searchCourseList();
     Mockito.verify(converter, times(1)).convertStudentDetails(studentList, courseList);
+    Assertions.assertEquals(converter.convertStudentDetails(studentList, courseList), actual);
   }
 
   @Test
@@ -65,8 +65,30 @@ class StudentServiceTest {
 
     StudentDetail actual = sut.registerStudent(studentDetail);
 
-    Mockito.verify(repository, times(1)).registerStudent(any(Student.class));
-    Mockito.verify(repository, times(1)).registerCourse(any(StudentCourse.class));
+    Mockito.verify(repository, times(1)).registerStudent(student);
+    Mockito.verify(repository, times(1)).registerCourse(studentCourse);
+    Assertions.assertEquals(student, actual.getStudent());
+    Assertions.assertEquals(courseList, actual.getStudentCourseList());
+  }
+
+  @Test
+  void 受講生詳細登録の初期情報設定_正しく値が設定されていること() {
+    int studentId = 1;
+    String courseName = "Javaコース";
+    LocalDate startDate = LocalDate.parse("2019-08-15");
+    Student student = new Student();
+    StudentCourse studentCourse = new StudentCourse();
+    student.setId(studentId);
+    studentCourse.setStudentId(student.getId());
+    studentCourse.setCourseName(courseName);
+    studentCourse.setStartDate(startDate);
+
+    sut.initStudentsCourse(studentCourse, student);
+
+    Assertions.assertEquals(studentId, studentCourse.getStudentId());
+    Assertions.assertEquals(courseName, studentCourse.getCourseName());
+    Assertions.assertEquals(startDate, studentCourse.getStartDate());
+    Assertions.assertEquals(startDate.plusMonths(6), studentCourse.getScheduledEndDate());
   }
 
   @Test
