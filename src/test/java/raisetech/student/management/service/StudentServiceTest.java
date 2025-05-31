@@ -44,7 +44,7 @@ class StudentServiceTest {
   }
 
   @Test
-  void 受講生詳細の全件検索_リポジトリとコンバーターの処理が適切に呼び出せていること() {
+  void 受講生詳細の全件検索_リポジトリとコンバーターの検索処理が適切に呼び出せていること() {
     List<Student> studentList = new ArrayList();
     List<StudentCourse> courseList = new ArrayList();
     Mockito.when(repository.searchStudent()).thenReturn(studentList);
@@ -58,7 +58,7 @@ class StudentServiceTest {
   }
 
   @Test
-  void 新規受講生詳細の登録_リポジトリの更新処理が呼び出されていること() {
+  void 新規受講生詳細の登録_リポジトリの登録処理が呼び出されていること() {
     StudentDetail studentDetail = mock(StudentDetail.class);
     Mockito.when(studentDetail.getStudent()).thenReturn(student);
     Mockito.when(studentDetail.getStudentCourseList()).thenReturn(courseList);
@@ -70,7 +70,7 @@ class StudentServiceTest {
   }
 
   @Test
-  void 受講生詳細の単一検索_リポジトリの更新処理が呼び出されていること() {
+  void 受講生詳細の単一検索_リポジトリのIDに紐づく検索処理が呼び出されていること() {
     int studentId = 1;
     Mockito.when(repository.getStudentInfo(studentId)).thenReturn(student);
     Mockito.when(repository.getCourseInfo(studentId)).thenReturn(courseList);
