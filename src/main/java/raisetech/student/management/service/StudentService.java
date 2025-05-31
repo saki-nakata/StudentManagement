@@ -31,7 +31,6 @@ public class StudentService {
    *
    * @return 受講生詳細一覧(全件)
    */
-
   public List<StudentDetail> searchStudentList() {
     List<Student> studentList = repository.searchStudent();
     List<StudentCourse> courseList = repository.searchCourseList();
@@ -69,7 +68,9 @@ public class StudentService {
     course.setCourseName(course.getCourseName());
     LocalDate startDate = course.getStartDate();
     course.setStartDate(startDate);
-    course.setScheduledEndDate(startDate.plusMonths(6));
+    if (course.getStartDate() != null) {
+      course.setScheduledEndDate(course.getStartDate().plusMonths(6));
+    }
   }
 
   /**
