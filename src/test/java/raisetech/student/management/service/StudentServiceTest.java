@@ -76,19 +76,21 @@ class StudentServiceTest {
     int studentId = 1;
     String courseName = "Javaコース";
     LocalDate startDate = LocalDate.parse("2019-08-15");
+
     Student student = new Student();
-    StudentCourse studentCourse = new StudentCourse();
     student.setId(studentId);
-    studentCourse.setStudentId(student.getId());
-    studentCourse.setCourseName(courseName);
-    studentCourse.setStartDate(startDate);
 
-    sut.initStudentsCourse(studentCourse, student);
+    StudentCourse actual = new StudentCourse();
+    actual.setStudentId(student.getId());
+    actual.setCourseName(courseName);
+    actual.setStartDate(startDate);
 
-    Assertions.assertEquals(studentId, studentCourse.getStudentId());
-    Assertions.assertEquals(courseName, studentCourse.getCourseName());
-    Assertions.assertEquals(startDate, studentCourse.getStartDate());
-    Assertions.assertEquals(startDate.plusMonths(6), studentCourse.getScheduledEndDate());
+    sut.initStudentsCourse(actual, student);
+
+    StudentCourse expected = new StudentCourse(0, studentId, courseName, startDate,
+        startDate.plusMonths(6));
+
+    Assertions.assertEquals(actual, expected);
   }
 
   @Test
