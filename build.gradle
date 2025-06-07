@@ -51,6 +51,9 @@ dependencies {
     //mockito-inline
     testImplementation 'org.mockito:mockito-inline:5.2.0' // または最新バージョン
 
+    // Jacksonで日時型(LocalDateなど)を扱うための拡張モジュール
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
