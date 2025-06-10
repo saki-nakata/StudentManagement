@@ -20,11 +20,11 @@ class StudentConverterTest {
   private StudentConverter sut;
 
   @Test
-  void 受講生に紐づく受講生コース情報が正しく受講生詳細に変換できていること() {
+  void 受講生に紐づく受講生コース情報_正常系_受講生詳細に変換できていること() {
     Student studentA = new Student(1, "山田 花子", "やまだ はなこ", "はなちゃん",
-        "hanako@example.com", "北海道札幌市", 18, "女性", "初心者です", false);
-    Student studentB = new Student(500, "佐藤 健", "さとう けん", null,
-        "sato.ken@example.com", "愛知県名古屋市", 35, "男性", null, false);
+        "hanako@example.com", "北海道札幌市", 18, "女性", "", false);
+    Student studentB = new Student(500, "佐藤 健", "さとう けん", "けん",
+        "sato.ken@example.com", "愛知県名古屋市", 35, "男性", "転職希望", false);
     Student studentC = new Student(999, "高橋 太一郎", "たかはし たいちろう", "たいちゃん",
         "verylong.email.address@example.com", "鹿児島県奄美市", 50, "その他", "副業希望", false);
     List<Student> studentList = List.of(studentA, studentB, studentC);
@@ -60,6 +60,26 @@ class StudentConverterTest {
 
     assertThat(actual).isEqualTo(expected);
     assertThat(actual).containsExactly(studentDetailA, studentDetailB, studentDetailC);
+  }
+
+  @Test
+  void 存在しない受講生IDを持つ受講生コース情報_異常系_変換結果に含まれないこと() {
+    int studentId = 123;
+    Student student = new Student(studentId, "鈴木 太郎", "スズキ タロウ", "すずたろう",
+        "taro.suzuki@example.com", "東京都", 30, "男性", "", false);
+
+    StudentCourse courseA = new StudentCourse(100, studentId, "Webマーケティングコース",
+        LocalDate.parse("2024-09-01"), LocalDate.parse("2025-03-01"));
+    StudentCourse courseB = new StudentCourse(999, 999, "デザインコース",
+        LocalDate.parse("2025-01-10"), LocalDate.parse("2025-07-10"));
+
+    List<StudentDetail> expected = List.of(new StudentDetail(student, List.of(courseA)));
+
+    List<StudentDetail> actual = sut.convertStudentDetails
+        (List.of(student), List.of(courseA, courseB));
+
+    assertThat(actual).isEqualTo(expected);
+    assertThat(actual.get(0).getStudent().getId()).isEqualTo(studentId);
   }
 
 }
