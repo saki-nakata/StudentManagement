@@ -68,7 +68,7 @@ class StudentConverterTest {
     Student student = new Student(studentId, "鈴木 太郎", "スズキ タロウ", "すずたろう",
         "taro.suzuki@example.com", "東京都", 30, "男性", "", false);
 
-    StudentCourse courseA = new StudentCourse(100, 444, "Webマーケティングコース",
+    StudentCourse courseA = new StudentCourse(100, studentId, "Webマーケティングコース",
         LocalDate.parse("2024-09-01"), LocalDate.parse("2025-03-01"));
     StudentCourse courseB = new StudentCourse(999, 999, "デザインコース",
         LocalDate.parse("2025-01-10"), LocalDate.parse("2025-07-10"));
