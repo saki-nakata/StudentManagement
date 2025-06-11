@@ -2,6 +2,7 @@ package raisetech.student.management.service;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,7 +83,7 @@ class StudentServiceTest {
     actual.setCourseName(courseName);
     actual.setStartDate(startDate);
 
-    sut.initStudentsCourse(actual, studentId );
+    sut.initStudentsCourse(actual, studentId);
 
     StudentCourse expected = new StudentCourse(0, studentId, courseName, startDate,
         startDate.plusMonths(6));

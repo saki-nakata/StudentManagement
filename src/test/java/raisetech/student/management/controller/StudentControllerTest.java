@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -40,6 +42,7 @@ class StudentControllerTest {
   private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
   private Student student;
   private StudentCourse course;
+  private ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
   @BeforeEach
   void before() {
@@ -52,7 +55,8 @@ class StudentControllerTest {
   @Test
   void 受講生詳細の一覧検索_正常系_空の受講生リストが返されること() throws Exception {
     mockMvc.perform(MockMvcRequestBuilders.get("/studentList"))
-        .andExpect(status().isOk());
+        .andExpect(status().isOk())
+        .andExpect(content().json("[]"));
 
     verify(service, times(1)).searchStudentList();
   }
@@ -82,13 +86,11 @@ class StudentControllerTest {
     List<StudentCourse> courseList = List.of(course);
     StudentDetail studentDetail = new StudentDetail(student, courseList);
 
-    ObjectMapper mapper = new ObjectMapper();
-    mapper.registerModule(new JavaTimeModule());
-
     mockMvc.perform(MockMvcRequestBuilders.put("/updateStudent")
             .contentType(MediaType.APPLICATION_JSON)
             .content(mapper.writeValueAsString(studentDetail)))
         .andExpect(status().isOk());
+
     verify(service, times(1)).updateStudent(any(StudentDetail.class));
   }
 
@@ -97,13 +99,11 @@ class StudentControllerTest {
     List<StudentCourse> courseList = List.of(course);
     StudentDetail studentDetail = new StudentDetail(student, courseList);
 
-    ObjectMapper mapper = new ObjectMapper();
-    mapper.registerModule(new JavaTimeModule());
-
     mockMvc.perform(MockMvcRequestBuilders.post("/registerStudent")
             .contentType(MediaType.APPLICATION_JSON)
             .content(mapper.writeValueAsString(studentDetail)))
         .andExpect(status().isOk());
+
     verify(service, times(1)).registerStudent(any(StudentDetail.class));
   }
 
@@ -115,6 +115,7 @@ class StudentControllerTest {
   }
 
   @Test
+  @DisplayName("受講生情報のバリデーションチェック")
   void 受講生詳細_正常系_入力チェックで異常が発生しないこと() {
     Set<ConstraintViolation<Student>> violations = studentViolations(student);
 
@@ -197,6 +198,7 @@ class StudentControllerTest {
   }
 
   @Test
+  @DisplayName("受講生コース情報のバリデーションチェック")
   void 受講生コース情報_正常系_入力チェックで異常が発生しないこと() {
     Set<ConstraintViolation<StudentCourse>> violations = courseViolations(course);
 
