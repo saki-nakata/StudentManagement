@@ -40,10 +40,9 @@
 
   <!-- 受講生の更新 -->
   <update id="updateStudent">
-    UPDATE students SET full_name = #{fullName}, furigana = #{furigana}, email_address =
-    #{emailAddress},
-    live_city = #{liveCity},age = #{age}, gender = #{gender}, remark = #{remark}, is_deleted =
-    #{isDeleted}
+    UPDATE students SET full_name = #{fullName}, furigana = #{furigana}, nickname = #{nickname},
+    email_address = #{emailAddress}, live_city = #{liveCity},age = #{age}, gender = #{gender},
+    remark = #{remark}, is_deleted = #{isDeleted}
     WHERE id = #{id}
   </update>
 
