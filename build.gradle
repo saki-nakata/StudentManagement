@@ -54,8 +54,16 @@ dependencies {
     // Jacksonで日時型(LocalDateなど)を扱うための拡張モジュール
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
+    //APサーバー(Tomcat)
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+
+    //SpringBoot Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    //MyBatis Test
+    testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.4'
+    //H2(InMemoryDB)
+    testImplementation 'com.h2database:h2:2.3.232'
+    
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 }

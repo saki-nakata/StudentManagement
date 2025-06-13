@@ -5,9 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
@@ -16,8 +16,12 @@ import raisetech.student.management.domain.StudentDetail;
 @ExtendWith(MockitoExtension.class)
 class StudentConverterTest {
 
-  @InjectMocks
   private StudentConverter sut;
+
+  @BeforeEach
+  void before() {
+    sut = new StudentConverter();
+  }
 
   @Test
   void 受講生に紐づく受講生コース情報_正常系_受講生詳細に変換できていること() {
