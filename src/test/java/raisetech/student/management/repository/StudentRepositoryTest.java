@@ -7,6 +7,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import raisetech.student.management.data.CourseStatus;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 
@@ -42,8 +43,8 @@ class StudentRepositoryTest {
     student.setDeleted(false);
 
     sut.registerStudent(student);
-
     List<Student> actual = sut.searchStudent();
+
     assertThat(actual).hasSize(6);
   }
 
@@ -52,13 +53,26 @@ class StudentRepositoryTest {
     StudentCourse course = new StudentCourse();
     course.setStudentId(999);
     course.setCourseName("Javaコース");
-    course.setStartDate(LocalDate.parse("2019-08-20"));
-    course.setScheduledEndDate(LocalDate.parse("2020-02-20"));
+    course.setStartDate(LocalDate.of(2019, 8, 15));
+    course.setScheduledEndDate(LocalDate.of(2019, 2, 15));
 
     sut.registerCourse(course);
-
     List<StudentCourse> actual = sut.searchCourseList();
+
     assertThat(actual).hasSize(6);
+  }
+
+  @Test
+  void 申込状況が登録できること() {
+    int courseId = 999;
+    CourseStatus expected = new CourseStatus();
+    expected.setCourseId(courseId);
+    expected.setApplicationStatus("本申込");
+
+    sut.registerStatus(expected);
+    CourseStatus actual = sut.getStatusInfo(courseId);
+
+    assertThat(actual).isEqualTo(expected);
   }
 
   @Test
@@ -70,7 +84,7 @@ class StudentRepositoryTest {
   }
 
   @Test
-  void 受講生の取得_異常系_存在しないIDの場合はnullを返すこと() {
+  void 受講生の検索_異常系_存在しないIDの場合はnullを返すこと() {
     int id = 500;
     Student actual = sut.getStudentInfo(id);
 
@@ -95,14 +109,30 @@ class StudentRepositoryTest {
   }
 
   @Test
+  void 申込状況の検索_正常系_紐づくコースIDで検索できること() {
+    int courseId = 1;
+    CourseStatus actual = sut.getStatusInfo(courseId);
+
+    assertThat(actual.getCourseId()).isEqualTo(courseId);
+  }
+
+  @Test
+  void 申込状況の検索_異常系_存在しないIDの場合はnullを返すこと() {
+    int courseId = 999;
+    CourseStatus actual = sut.getStatusInfo(courseId);
+
+    assertThat(actual).isNull();
+  }
+
+  @Test
   void 受講生の更新ができること() {
     int id = 4;
     Student expected = new Student(id, "佐藤 美咲", "さとう みさき", "Misaki", "misaki@example.com",
         "愛知県名古屋市", 22, "女性", "", false);
 
     sut.updateStudent(expected);
-
     Student actual = sut.getStudentInfo(id);
+
     assertThat(actual).isEqualTo(expected);
   }
 
@@ -110,11 +140,22 @@ class StudentRepositoryTest {
   void コース情報の更新ができること() {
     int studentId = 4;
     StudentCourse expected = new StudentCourse(4, studentId, "Javaコース",
-        LocalDate.parse("2025-01-15"), LocalDate.parse("2025-07-15"));
+        LocalDate.of(2025, 1, 15), LocalDate.of(2025, 7, 15));
 
     sut.updateCourse(expected);
-
     StudentCourse actual = sut.getCourseInfo(studentId).get(0);
+
+    assertThat(actual).isEqualTo(expected);
+  }
+
+  @Test
+  void 申込状況の更新ができること() {
+    int courseId = 3;
+    CourseStatus expected = new CourseStatus(3, courseId, "本申込");
+
+    sut.updateStatus(expected);
+    CourseStatus actual = sut.getStatusInfo(courseId);
+
     assertThat(actual).isEqualTo(expected);
   }
 
