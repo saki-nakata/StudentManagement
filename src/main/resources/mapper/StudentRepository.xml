@@ -27,6 +27,12 @@
     VALUES (#{studentId}, #{courseName}, #{startDate}, #{scheduledEndDate})
   </insert>
 
+  <!-- 申込状況の新規登録(IDは自動採番) -->
+  <insert id="registerStatus" useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO course_status (course_id, application_status)
+    VALUES (#{courseId}, #{applicationStatus})
+  </insert>
+
   <!-- 受講生検索(単一) -->
   <select id="getStudentInfo" resultType="raisetech.student.management.data.Student">
     SELECT * FROM students WHERE id = #{id}
@@ -37,6 +43,10 @@
     SELECT * FROM students_courses WHERE student_id = #{studentId}
   </select>
 
+  <!-- コース情報に紐づく申込状況 -->
+  <select id="getStatusInfo" resultType="raisetech.student.management.data.CourseStatus">
+    SELECT * FROM course_status WHERE course_id = #{courseId}
+  </select>
 
   <!-- 受講生の更新 -->
   <update id="updateStudent">
@@ -51,6 +61,12 @@
     UPDATE students_courses SET course_name = #{courseName}, start_date = #{startDate},
     scheduled_end_date = #{scheduledEndDate}
     WHERE id = #{id}
+  </update>
+
+  <!-- 申込状況の更新 -->
+  <update id="updateStatus">
+    UPDATE course_status SET application_status = #{applicationStatus}
+    WHERE course_id = #{courseId}
   </update>
 
 </mapper>

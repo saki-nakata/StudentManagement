@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import raisetech.student.management.domain.CourseDetail;
 import raisetech.student.management.exception.ErrorMessage;
 import raisetech.student.management.exception.TestException;
 import raisetech.student.management.domain.StudentDetail;
@@ -41,9 +42,9 @@ public class StudentController {
   }
 
   /**
-   * 受講生詳細一覧検索です。 全件検索です。
+   * 受講生詳細一覧検索です。全件検索です。
    *
-   * @return 受講生詳細一覧(全件)
+   * @return 受講生詳細の一覧(全件)
    */
   @Operation(summary = "一覧検索", description = "受講生の一覧を検索します。",
       responses = {@ApiResponse(responseCode = "200", description = "成功",
@@ -55,14 +56,14 @@ public class StudentController {
   }
 
   /**
-   * 受講生検索です。 IDに紐づく任意の受講生の情報を取得します。
+   * 受講生検索です。IDに紐づく任意の受講生の情報を取得します。
    *
-   * @param id 　受講生ID
+   * @param id 受講生ID
    * @return 単一の受講生情報
    */
   @Operation(
-      summary = "受講生情報の取得",
-      description = "IDを指定して1人の受講生情報を取得します。",
+      summary = "受講生の取得",
+      description = "IDを指定して単一の受講生情報を取得します。",
       parameters = {
           @Parameter(name = "id", description = "受講生ID", required = true, example = "1")
       },
@@ -79,7 +80,7 @@ public class StudentController {
   }
 
   /**
-   * 受講生詳細の更新を行います。キャンセルフラグの更新も行います(論理削除)。
+   * 受講生詳細(受講生、コース情報、申込状況)の更新を行います。キャンセルフラグの更新も行います(論理削除)。
    *
    * @param studentDetail 受講生詳細
    * @return 実行結果
@@ -96,18 +97,50 @@ public class StudentController {
   }
 
   /**
-   * 受講生詳細の登録を行います。
+   * コース詳細(コース情報、申込状況)の更新を行います。
+   *
+   * @param courseDetail コース詳細
+   * @return 実行結果
+   */
+  @Operation(summary = "コース詳細の更新", description = "コース詳細の更新をします。",
+      responses = {@ApiResponse(responseCode = "200", description = "成功",
+          content = @Content(schema = @Schema(implementation = CourseDetail.class)))
+      })
+  @PutMapping("/updateCourse")
+  public ResponseEntity<CourseDetail> updateCourse(
+      @RequestBody @Valid CourseDetail courseDetail) {
+    service.updateCourse(courseDetail);
+    return ResponseEntity.ok(courseDetail);
+  }
+
+  /**
+   * 受講生詳細(受講生、コース情報、申込状況)の登録を行います。
    *
    * @param studentDetail 受講生詳細
    * @return 実行結果
    */
-  @Operation(summary = "受講生登録", description = "受講生を登録します。",
+  @Operation(summary = "受講生詳細の登録", description = "受講生詳細(受講生、コース情報、申込状況)を登録します。",
       responses = {@ApiResponse(responseCode = "200", description = "成功")})
   @PostMapping("/registerStudent")
   public ResponseEntity<StudentDetail> registerStudent(
       @RequestBody @Valid StudentDetail studentDetail) throws TestException {
     service.registerStudent(studentDetail);
     return ResponseEntity.ok(studentDetail);
+  }
+
+  /**
+   * コース詳細(コース情報、申込状況)の登録を行います。
+   *
+   * @param courseDetail コース詳細
+   * @return 実行結果
+   */
+  @Operation(summary = "コース詳細の登録", description = "コース詳細(コース情報、申込状況)を登録します。",
+      responses = {@ApiResponse(responseCode = "200", description = "成功")})
+  @PostMapping("/registerCourse")
+  public ResponseEntity<CourseDetail> registerCourse(
+      @RequestBody @Valid CourseDetail courseDetail) throws TestException {
+    service.registerCourse(courseDetail);
+    return ResponseEntity.ok(courseDetail);
   }
 
   /**

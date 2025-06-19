@@ -9,8 +9,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import raisetech.student.management.data.CourseStatus;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
+import raisetech.student.management.domain.CourseDetail;
 import raisetech.student.management.domain.StudentDetail;
 
 @ExtendWith(MockitoExtension.class)
@@ -24,63 +26,56 @@ class StudentConverterTest {
   }
 
   @Test
-  void 受講生に紐づく受講生コース情報_正常系_受講生詳細に変換できていること() {
+  void 受講生に紐づくコース情報_正常系_受講生詳細に変換できていること() {
     Student studentA = new Student(1, "山田 花子", "やまだ はなこ", "はなちゃん",
         "hanako@example.com", "北海道札幌市", 18, "女性", "", false);
     Student studentB = new Student(500, "佐藤 健", "さとう けん", "けん",
         "sato.ken@example.com", "愛知県名古屋市", 35, "男性", "転職希望", false);
-    Student studentC = new Student(999, "高橋 太一郎", "たかはし たいちろう", "たいちゃん",
-        "verylong.email.address@example.com", "鹿児島県奄美市", 50, "その他", "副業希望", false);
-    List<Student> studentList = List.of(studentA, studentB, studentC);
+    List<Student> studentList = List.of(studentA, studentB);
 
-    List<StudentCourse> courseListA = List.of(
-        new StudentCourse(101, 1, "Javaコース", LocalDate.parse("2024-05-01"),
-            LocalDate.parse("2024-11-01")),
-        new StudentCourse(102, 1, "フロントエンドコース", LocalDate.parse("2024-12-01"),
-            LocalDate.parse("2025-05-01"))
-    );
-    List<StudentCourse> courseListB = List.of(
-        new StudentCourse(201, 500, "AWSコース", LocalDate.parse("2024-04-10"),
-            LocalDate.parse("2024-10-10")),
-        new StudentCourse(301, 500, "Javaコース", LocalDate.parse("2025-03-15"),
-            LocalDate.parse("2025-09-15"))
-    );
-    List<StudentCourse> courseListC = List.of(
-        new StudentCourse(302, 999, "デザインコース", LocalDate.parse("2025-05-20"),
-            LocalDate.parse("2025-11-20"))
-    );
-    List<StudentCourse> studentCourseList = new ArrayList<>();
-    studentCourseList.addAll(courseListA);
-    studentCourseList.addAll(courseListB);
-    studentCourseList.addAll(courseListC);
+    StudentCourse courseA = new StudentCourse(456, 1, "Javaコース", LocalDate.of(2024, 5, 11),
+        LocalDate.of(2024, 11, 1));
+    StudentCourse courseB = new StudentCourse(555, 1, "フロントエンドコース",
+        LocalDate.of(2024, 12, 1), LocalDate.of(2025, 5, 1));
+    StudentCourse courseC = new StudentCourse(600, 500, "AWSコース", LocalDate.of(2025, 6, 20),
+        LocalDate.of(2025, 12, 20));
 
-    StudentDetail studentDetailA = new StudentDetail(studentA, courseListA);
-    StudentDetail studentDetailB = new StudentDetail(studentB, courseListB);
-    StudentDetail studentDetailC = new StudentDetail(studentC, courseListC);
+    CourseStatus statusA = new CourseStatus(500, 101, "受講終了");
+    CourseStatus statusB = new CourseStatus(786, 555, "受講中");
+    CourseStatus statusC = new CourseStatus(888, 600, "本申込");
 
-    List<StudentDetail> expected = List.of(studentDetailA, studentDetailB, studentDetailC);
+    List<CourseDetail> courseDetailListA = List.of(new CourseDetail(courseA, statusA),
+        new CourseDetail(courseB, statusB));
+    List<CourseDetail> courseDetailListB = List.of(new CourseDetail(courseC, statusC));
 
-    List<StudentDetail> actual = sut.convertStudentDetails(studentList, studentCourseList);
+    List<CourseDetail> courseDetailList = new ArrayList<>();
+    courseDetailList.addAll(courseDetailListA);
+    courseDetailList.addAll(courseDetailListB);
+
+    StudentDetail studentDetailA = new StudentDetail(studentA, courseDetailListA);
+    StudentDetail studentDetailB = new StudentDetail(studentB, courseDetailListB);
+
+    List<StudentDetail> expected = List.of(studentDetailA, studentDetailB);
+
+    List<StudentDetail> actual = sut.convertStudentDetails(studentList, courseDetailList);
 
     assertThat(actual).isEqualTo(expected);
-    assertThat(actual).containsExactly(studentDetailA, studentDetailB, studentDetailC);
+    assertThat(actual).containsExactly(studentDetailA, studentDetailB);
   }
 
   @Test
-  void 存在しない受講生IDを持つ受講生コース情報_異常系_変換結果に含まれないこと() {
+  void 存在しない受講生IDを持つコース情報_異常系_変換結果に含まれないこと() {
     int studentId = 123;
     Student student = new Student(studentId, "鈴木 太郎", "スズキ タロウ", "すずたろう",
         "taro.suzuki@example.com", "東京都", 30, "男性", "", false);
+    StudentCourse course = new StudentCourse(500, 999, "デザインコース",
+        LocalDate.of(2025, 1, 10), LocalDate.of(2025, 7, 10));
+    CourseStatus status = new CourseStatus(987, 999, "仮申込");
 
-    StudentCourse courseA = new StudentCourse(100, studentId, "Webマーケティングコース",
-        LocalDate.parse("2024-09-01"), LocalDate.parse("2025-03-01"));
-    StudentCourse courseB = new StudentCourse(999, 999, "デザインコース",
-        LocalDate.parse("2025-01-10"), LocalDate.parse("2025-07-10"));
-
-    List<StudentDetail> expected = List.of(new StudentDetail(student, List.of(courseA)));
+    List<StudentDetail> expected = List.of(new StudentDetail(student, List.of()));
 
     List<StudentDetail> actual = sut.convertStudentDetails
-        (List.of(student), List.of(courseA, courseB));
+        (List.of(student), List.of(new CourseDetail(course, status)));
 
     assertThat(actual).isEqualTo(expected);
     assertThat(actual).hasSize(1);

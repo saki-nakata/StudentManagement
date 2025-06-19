@@ -2,8 +2,8 @@ package raisetech.student.management.data;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
@@ -30,7 +30,8 @@ public class StudentCourse {
   private int studentId; // 'student_id' フィールド
 
   @Schema(description = "コース名", example = "Javaコース", required = true)
-  @NotEmpty(message = "コース名を入力してください。")
+  @Pattern(regexp = "Javaコース|AWSコース|フロントエンドコース|Webマーケティングコース|デザインコース",
+      message = "｢Javaコース・AWSコース・フロントエンドコース・Webマーケティングコース・デザインコース｣のどれかを入力してください。")
   @Size(max = 30, message = "30桁以内で入力してください。")
   private String courseName;  // 'course_name' フィールド
 

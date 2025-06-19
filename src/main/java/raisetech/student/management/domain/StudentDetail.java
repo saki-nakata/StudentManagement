@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import raisetech.student.management.data.Student;
-import raisetech.student.management.data.StudentCourse;
 
 /**
  * 受講生詳細のオブジェクト
@@ -26,8 +25,8 @@ public class StudentDetail {
   @Valid
   private Student student;
 
-  @Schema(description = "受講生コース情報")
+  @Schema(description = "コース詳細情報")
   @Valid
-  private List<StudentCourse> studentCourseList;
+  private List<CourseDetail> courseDetailList;
 
 }

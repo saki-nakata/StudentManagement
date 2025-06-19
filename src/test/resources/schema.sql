@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS students (
-    id INT PRIMARY KEY AUTO_INCREMENT, -- H2ではAUTO_INCREMENTでも一応動作するが、IDENTITYの方が推奨
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, -- H2ではAUTO_INCREMENTでも一応動作するが、IDENTITYの方が推奨
     full_name VARCHAR(30) NOT NULL,
     furigana VARCHAR(50) NOT NULL,
     nickname VARCHAR(30) UNIQUE,
@@ -12,10 +12,17 @@ CREATE TABLE IF NOT EXISTS students (
 );
 
 CREATE TABLE IF NOT EXISTS students_courses (
-    id INT NOT NULL AUTO_INCREMENT,
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     student_id INT NOT NULL,
     course_name VARCHAR(30) NOT NULL,
     start_date DATE NOT NULL,
     scheduled_end_date DATE,
-    PRIMARY KEY (id)
+    CONSTRAINT unique_student_course UNIQUE (student_id, course_name)
+);
+
+CREATE TABLE course_status (
+    id INT  NOT NULL AUTO_INCREMENT,
+    course_id INT NOT NULL,
+    application_status VARCHAR(20) NOT NULL DEFAULT '仮申込',
+    PRIMARY KEY (id,course_id)
 );
