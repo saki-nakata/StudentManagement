@@ -12,6 +12,7 @@ import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.CourseDetail;
 import raisetech.student.management.domain.StudentDetail;
+import raisetech.student.management.dto.SearchCondition;
 import raisetech.student.management.repository.StudentRepository;
 
 /**
@@ -30,15 +31,15 @@ public class StudentService {
   }
 
   /**
-   * 受講生詳細の一覧検索です。全件検索を行います。
+   * 受講生詳細の条件検索を行います。条件を指定しない場合は全件検索を行います。
    *
-   * @return 受講生詳細の一覧(全件)
+   * @return 受講生詳細の一覧
    */
-  public List<StudentDetail> searchStudentList() {
+  public List<StudentDetail> search(SearchCondition condition) {
     List<Student> studentList = repository.searchStudent();
     List<StudentCourse> courseList = repository.searchCourseList();
     List<CourseDetail> courseDetailList = mapToCourseDetailList(courseList);
-    return converter.convertStudentDetails(studentList, courseDetailList);
+    return converter.mapToStudentDetailList(studentList, courseDetailList, condition);
   }
 
   /**
@@ -65,7 +66,7 @@ public class StudentService {
   }
 
   /**
-   * コース情報を登録する際の初期情報を設定する。
+   * コース情報を登録する際の初期情報を設定をします。
    *
    * @param course    コース情報
    * @param studentId 受講生ID

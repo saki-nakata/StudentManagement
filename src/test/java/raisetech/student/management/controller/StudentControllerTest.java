@@ -5,7 +5,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,6 +30,7 @@ import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.CourseDetail;
 import raisetech.student.management.domain.StudentDetail;
+import raisetech.student.management.dto.SearchCondition;
 import raisetech.student.management.service.StudentService;
 
 @WebMvcTest(StudentController.class)
@@ -57,32 +57,12 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細の一覧検索_正常系_空の受講生リストが返されること() throws Exception {
-    mockMvc.perform(MockMvcRequestBuilders.get("/studentList"))
+  void 受講生詳細の条件検索_正常系_空の受講生リストが返されること() throws Exception {
+    mockMvc.perform(MockMvcRequestBuilders.get("/search"))
         .andExpect(status().isOk())
         .andExpect(content().json("[]"));
 
-    verify(service, times(1)).searchStudentList();
-  }
-
-  @Test
-  void 受講生情報の単一検索_正常系_有効なID指定でOKが返ること() throws Exception {
-    int id = 999;
-    mockMvc.perform(MockMvcRequestBuilders.get("/student/{id}", id))
-        .andExpect(status().isOk());
-
-    verify(service, times(1)).getStudentInfo(id);
-  }
-
-  @Test
-  void 受講生情報の単一検索_異常系_無効なID指定でBadRequestが返ること()
-      throws Exception {
-    int id = 10000;
-    mockMvc.perform(MockMvcRequestBuilders.get("/student/{id}", id))
-        .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.statusValue").value(400))
-        .andExpect(jsonPath("$.statusName").value("BAD_REQUEST"))
-        .andExpect(jsonPath("$.message").value("getStudentInfo.id: 999以下の数値にしてください。"));
+    verify(service, times(1)).search(any(SearchCondition.class));
   }
 
   @Test

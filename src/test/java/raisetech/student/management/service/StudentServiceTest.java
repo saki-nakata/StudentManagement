@@ -20,6 +20,7 @@ import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.CourseDetail;
 import raisetech.student.management.domain.StudentDetail;
+import raisetech.student.management.dto.SearchCondition;
 import raisetech.student.management.repository.StudentRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,6 +40,7 @@ class StudentServiceTest {
   private CourseStatus status;
   private CourseDetail courseDetail;
   private StudentDetail studentDetail;
+  private SearchCondition condition;
 
   @BeforeEach
   void before() {
@@ -47,10 +49,11 @@ class StudentServiceTest {
     status = mock(CourseStatus.class);
     courseDetail = mock(CourseDetail.class);
     studentDetail = mock(StudentDetail.class);
+    condition = mock(SearchCondition.class);
   }
 
   @Test
-  void 受講生詳細の全件検索_リポジトリとコンバーターの一覧検索処理が適切に呼び出せていること() {
+  void 受講生詳細の条件検索_リポジトリとコンバーターの一覧検索処理が適切に呼び出せていること() {
     List<Student> studentList = List.of(student);
     List<StudentCourse> courseList = List.of(course);
     List<CourseDetail> courseDetailList = List.of(courseDetail);
@@ -58,13 +61,16 @@ class StudentServiceTest {
     Mockito.when(repository.searchCourseList()).thenReturn(courseList);
     Mockito.when(sut.mapToCourseDetailList(courseList)).thenReturn(courseDetailList);
 
-    List<StudentDetail> actual = sut.searchStudentList();
+    List<StudentDetail> actual = sut.search(condition);
 
     Mockito.verify(repository, times(1)).searchStudent();
     Mockito.verify(repository, times(1)).searchCourseList();
     Mockito.verify(sut, times(1)).mapToCourseDetailList(courseList);
-    Mockito.verify(converter, times(1)).convertStudentDetails(studentList, courseDetailList);
-    List<StudentDetail> expected = converter.convertStudentDetails(studentList, courseDetailList);
+    Mockito.verify(converter, times(1))
+        .mapToStudentDetailList(studentList, courseDetailList, condition);
+
+    List<StudentDetail> expected = converter.mapToStudentDetailList(studentList, courseDetailList,
+        condition);
     assertThat(actual).isEqualTo(expected);
   }
 
