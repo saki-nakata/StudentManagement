@@ -2,7 +2,6 @@ package raisetech.student.management.service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,15 +30,23 @@ public class StudentService {
   }
 
   /**
-   * 受講生詳細の条件検索を行います。条件を指定しない場合は全件検索を行います。
+   * 受講生詳細の条件検索を行います。検索条件がない場合は全件検索を行います。 検索条件が指定されていない場合は、全件の受講生情報を返します。
    *
-   * @return 受講生詳細の一覧
+   * @param condition 検索条件
+   * @return 検索条件に一致した受講生詳細の一覧
    */
   public List<StudentDetail> search(SearchCondition condition) {
-    List<Student> studentList = repository.searchStudent();
-    List<StudentCourse> courseList = repository.searchCourseList();
-    List<CourseDetail> courseDetailList = mapToCourseDetailList(courseList);
-    return converter.mapToStudentDetailList(studentList, courseDetailList, condition);
+    List<Student> studentList = repository.searchStudentList(condition);
+    List<StudentCourse> courseList = repository.searchCourseList(condition);
+    List<CourseStatus> statusList = repository.searchStatusList(condition);
+
+    boolean isCourseDetailConditionEmpty = false;
+    if (condition.getCourseId() == null && condition.getCourseName() == null
+        && condition.getStatusId() == null && condition.getStatus() == null) {
+      isCourseDetailConditionEmpty = true;
+    }
+    return converter.mapToStudentDetailList(studentList, courseList, statusList,
+        isCourseDetailConditionEmpty);
   }
 
   /**
@@ -110,29 +117,7 @@ public class StudentService {
     return startDate.plusMonths(6);
   }
 
-  /**
-   * 受講生詳細の検索です。IDに紐づく受講生詳細を取得します。
-   *
-   * @param studentId 受講生ID
-   * @return 受講生詳細
-   */
-  public StudentDetail getStudentInfo(int studentId) {
-    Student student = repository.getStudentInfo(studentId);
-    List<StudentCourse> courseList = repository.getCourseInfo(studentId);
-    List<CourseDetail> courseDetailList = mapToCourseDetailList(courseList);
-    return new StudentDetail(student, courseDetailList);
-  }
 
-  /**
-   * コース情報から申込状況を紐づけてコース詳細をマッピングします。
-   *
-   * @param courseList コース情報の一覧
-   * @return コース詳細の一覧
-   */
-  List<CourseDetail> mapToCourseDetailList(List<StudentCourse> courseList) {
-    return courseList.stream().map(course -> new CourseDetail(course,
-        repository.getStatusInfo(course.getId()))).collect(Collectors.toList());
-  }
 
   /**
    * 受講生詳細の更新を行います。受講生、コース情報、申込状況をそれぞれ更新します。

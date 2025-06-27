@@ -4,12 +4,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDate;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import raisetech.student.management.data.CourseStatus;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
+import raisetech.student.management.dto.SearchCondition;
 
 @MybatisTest
 class StudentRepositoryTest {
@@ -17,16 +19,114 @@ class StudentRepositoryTest {
   @Autowired
   private StudentRepository sut;
 
+  private SearchCondition condition;
+
+  @BeforeEach
+  void before() {
+    condition = new SearchCondition();
+  }
+
   @Test
-  void 受講生の全件検索ができること() {
-    List<Student> actual = sut.searchStudent();
+  void 受講生の検索ができること() {
+    List<Student> actual = sut.searchStudentList(condition);
+    assertThat(actual).hasSize(5);
+  }
+
+  @Test
+  void 受講生IDで受講生を検索できること() {
+    condition.setStudentId(5);
+    List<Student> actual = sut.searchStudentList(condition);
+    assertThat(actual).hasSize(1);
+  }
+
+  @Test
+  void 名前に含まれる文字で受講生を検索できること() {
+    condition.setName("高");
+    List<Student> actual = sut.searchStudentList(condition);
+    assertThat(actual).hasSize(1);
+  }
+
+  @Test
+  void ふりがなに含まれる文字で受講生を検索できること() {
+    condition.setFurigana("みさき");
+    List<Student> actual = sut.searchStudentList(condition);
+    assertThat(actual).hasSize(1);
+  }
+
+  @Test
+  void ニックネームに含まれる文字で受講生を検索できること() {
+    condition.setNickname("ハナ");
+    List<Student> actual = sut.searchStudentList(condition);
+    assertThat(actual).hasSize(1);
+  }
+
+  @Test
+  void 住んでいる地域に含まれる文字で受講生を検索できること() {
+    condition.setLiveCity("東京");
+    List<Student> actual = sut.searchStudentList(condition);
+    assertThat(actual).hasSize(1);
+  }
+
+  @Test
+  void 年齢範囲で受講生を検索できること() {
+    condition.setMinAge(30);
+    condition.setMaxAge(39);
+    List<Student> actual = sut.searchStudentList(condition);
+    assertThat(actual).hasSize(2);
+  }
+
+  @Test
+  void 性別で受講生を検索できること() {
+    condition.setGender("女性");
+    List<Student> actual = sut.searchStudentList(condition);
+    assertThat(actual).hasSize(2);
+  }
+
+  @Test
+  void 論理削除フラグで受講生を検索できること() {
+    condition.setIsDeleted(false);
+    List<Student> actual = sut.searchStudentList(condition);
     assertThat(actual).hasSize(5);
   }
 
   @Test
   void コース情報の全件検索ができること() {
-    List<StudentCourse> actual = sut.searchCourseList();
+    List<StudentCourse> actual = sut.searchCourseList(condition);
     assertThat(actual).hasSize(5);
+  }
+
+  @Test
+  void コースIDでコース情報を検索できること() {
+    condition.setCourseId(2);
+    List<StudentCourse> actual = sut.searchCourseList(condition);
+    assertThat(actual).hasSize(1);
+  }
+
+  @Test
+  void コース名に含まれる文字でコース情報を検索できること() {
+    condition.setCourseName("デザイン");
+    List<StudentCourse> actual = sut.searchCourseList(condition);
+    assertThat(actual).hasSize(1);
+  }
+
+  @Test
+  void 申込状況の全件検索ができること() {
+    List<CourseStatus> actual = sut.searchStatusList(condition);
+    assertThat(actual).hasSize(5);
+  }
+
+  @Test
+  void 申込状況IDで申込状況を検索できること() {
+    condition.setStatusId(3);
+    List<CourseStatus> actual = sut.searchStatusList(condition);
+    assertThat(actual).hasSize(1);
+  }
+
+  @Test
+  void 申込状況でコースの状態を検索できること() {
+    condition.setStatus("本申込");
+    List<CourseStatus> actual = sut.searchStatusList(condition);
+    assertThat(actual).hasSize(1);
   }
 
   @Test
@@ -43,7 +143,8 @@ class StudentRepositoryTest {
     student.setDeleted(false);
 
     sut.registerStudent(student);
-    List<Student> actual = sut.searchStudent();
+
+    List<Student> actual = sut.searchStudentList(condition);
 
     assertThat(actual).hasSize(6);
   }
@@ -57,104 +158,70 @@ class StudentRepositoryTest {
     course.setScheduledEndDate(LocalDate.of(2019, 2, 15));
 
     sut.registerCourse(course);
-    List<StudentCourse> actual = sut.searchCourseList();
+
+    List<StudentCourse> actual = sut.searchCourseList(condition);
 
     assertThat(actual).hasSize(6);
   }
 
   @Test
   void 申込状況が登録できること() {
-    int courseId = 999;
-    CourseStatus expected = new CourseStatus();
-    expected.setCourseId(courseId);
-    expected.setApplicationStatus("本申込");
+    String applicationStatus = "本申込";
+    CourseStatus status = new CourseStatus();
+    status.setCourseId(999);
+    status.setApplicationStatus(applicationStatus);
 
-    sut.registerStatus(expected);
-    CourseStatus actual = sut.getStatusInfo(courseId);
+    sut.registerStatus(status);
 
-    assertThat(actual).isEqualTo(expected);
-  }
+    List<CourseStatus> actual = sut.searchStatusList(condition);
 
-  @Test
-  void 受講生の検索_正常系_存在するIDで取得できること() {
-    int id = 5;
-    Student actual = sut.getStudentInfo(id);
-
-    assertThat(actual.getId()).isEqualTo(id);
-  }
-
-  @Test
-  void 受講生の検索_異常系_存在しないIDの場合はnullを返すこと() {
-    int id = 500;
-    Student actual = sut.getStudentInfo(id);
-
-    assertThat(actual).isNull();
-  }
-
-  @Test
-  void コース情報の検索_正常系_紐づく受講生IDで検索できること() {
-    int studentId = 1;
-    List<StudentCourse> actual = sut.getCourseInfo(studentId);
-
-    assertThat(actual).hasSize(1);
-    assertThat(actual.get(0).getStudentId()).isEqualTo(studentId);
-  }
-
-  @Test
-  void コース情報の検索_異常系_存在しない受講生IDの場合は空の結果を返すこと() {
-    int studentId = 987;
-    List<StudentCourse> actual = sut.getCourseInfo(studentId);
-
-    assertThat(actual).hasSize(0);
-  }
-
-  @Test
-  void 申込状況の検索_正常系_紐づくコースIDで検索できること() {
-    int courseId = 1;
-    CourseStatus actual = sut.getStatusInfo(courseId);
-
-    assertThat(actual.getCourseId()).isEqualTo(courseId);
-  }
-
-  @Test
-  void 申込状況の検索_異常系_存在しないIDの場合はnullを返すこと() {
-    int courseId = 999;
-    CourseStatus actual = sut.getStatusInfo(courseId);
-
-    assertThat(actual).isNull();
+    assertThat(actual).hasSize(6);
   }
 
   @Test
   void 受講生の更新ができること() {
-    int id = 4;
-    Student expected = new Student(id, "佐藤 美咲", "さとう みさき", "Misaki", "misaki@example.com",
+    int studentId = 4;
+    Student student = new Student(studentId, "佐藤 美咲", "さとう みさき", "Misaki",
+        "misaki@example.com",
         "愛知県名古屋市", 22, "女性", "", false);
 
-    sut.updateStudent(expected);
-    Student actual = sut.getStudentInfo(id);
+    List<Student> expected = List.of(student);
+
+    sut.updateStudent(student);
+
+    condition.setStudentId(studentId);
+    List<Student> actual = sut.searchStudentList(condition);
 
     assertThat(actual).isEqualTo(expected);
   }
 
   @Test
   void コース情報の更新ができること() {
-    int studentId = 4;
-    StudentCourse expected = new StudentCourse(4, studentId, "Javaコース",
+    int courseId = 4;
+    StudentCourse course = new StudentCourse(courseId, 4, "Javaコース",
         LocalDate.of(2025, 1, 15), LocalDate.of(2025, 7, 15));
 
-    sut.updateCourse(expected);
-    StudentCourse actual = sut.getCourseInfo(studentId).get(0);
+    List<StudentCourse> expected = List.of(course);
+
+    sut.updateCourse(course);
+
+    condition.setCourseId(courseId);
+    List<StudentCourse> actual = sut.searchCourseList(condition);
 
     assertThat(actual).isEqualTo(expected);
   }
 
   @Test
   void 申込状況の更新ができること() {
-    int courseId = 3;
-    CourseStatus expected = new CourseStatus(3, courseId, "本申込");
+    int statusId = 3;
+    CourseStatus status = new CourseStatus(statusId, 3, "本申込");
 
-    sut.updateStatus(expected);
-    CourseStatus actual = sut.getStatusInfo(courseId);
+    List<CourseStatus> expected = List.of(status);
+
+    sut.updateStatus(status);
+
+    condition.setStatusId(statusId);
+    List<CourseStatus> actual = sut.searchStatusList(condition);
 
     assertThat(actual).isEqualTo(expected);
   }

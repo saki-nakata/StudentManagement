@@ -41,7 +41,8 @@ public class StudentController {
   /**
    * 受講生詳細の条件検索です。条件を指定しない場合は全件検索を行います。
    *
-   * @return 受講生詳細の一覧
+   * @param condition 検索条件
+   * @return 条件に一致した受講生詳細の一覧
    */
   @Operation(summary = "受講生詳細の条件検索", description = "条件に一致する受講生詳細の一覧を検索します。",
       responses = {@ApiResponse(responseCode = "200", description = "成功",

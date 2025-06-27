@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import raisetech.student.management.data.CourseStatus;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
+import raisetech.student.management.dto.SearchCondition;
 
 /**
  * 受講生、コース情報、申込状況を扱うリポジトリです。検索や登録、更新を行います。
@@ -13,18 +14,28 @@ import raisetech.student.management.data.StudentCourse;
 public interface StudentRepository {
 
   /**
-   * 受講生の全件検索を行います。
+   * 検索条件による受講生の一覧を取得します。
    *
-   * @return 受講生の一覧(全件)
+   * @param condition 検索条件
+   * @return 検索条件に一致した受講生の一覧
    */
-  List<Student> searchStudent();
+  List<Student> searchStudentList(SearchCondition condition);
 
   /**
-   * 受講生のコース情報の全件検索を行います。
+   * 検索条件による受講生コース情報の一覧を取得します。
    *
-   * @return コース情報の一覧(全件)
+   * @param condition 検索条件
+   * @return 検索条件に一致した受講生コース情報の一覧
    */
-  List<StudentCourse> searchCourseList();
+  List<StudentCourse> searchCourseList(SearchCondition condition);
+
+  /**
+   * 検索条件によるコース申込状況の一覧を取得します。
+   *
+   * @param condition 検索条件
+   * @return 検索条件に一致したコース申込状況の一覧
+   */
+  List<CourseStatus> searchStatusList(SearchCondition condition);
 
   /**
    * 受講生を新規登録します。IDに関しては自動採番を行う。
@@ -46,30 +57,6 @@ public interface StudentRepository {
    * @param status 申込状況
    */
   void registerStatus(CourseStatus status);
-
-  /**
-   * IDに紐づく受講生の検索を行います。
-   *
-   * @param id 受講生ID
-   * @return IDに紐づく受講生
-   */
-  Student getStudentInfo(int id);
-
-  /**
-   * 受講生IDに紐づくコース情報を検索します。
-   *
-   * @param studentId 受講生ID
-   * @return 受講生IDに紐づくコース情報の一覧
-   */
-  List<StudentCourse> getCourseInfo(int studentId);
-
-  /**
-   * コースIDに紐づく申込状況を検索します。
-   *
-   * @param courseId コースID
-   * @return コースIDに紐づく申込状況
-   */
-  CourseStatus getStatusInfo(int courseId);
 
   /**
    * 受講生を更新します。
