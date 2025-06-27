@@ -3,14 +3,66 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="raisetech.student.management.repository.StudentRepository">
 
-  <!-- 受講生一覧(全件) -->
-  <select id="searchStudent" resultType="raisetech.student.management.data.Student">
+  <!-- 受講生の一覧 -->
+  <select id="searchStudentList" parameterType="raisetech.student.management.dto.SearchCondition"
+    resultType="raisetech.student.management.data.Student">
     SELECT * FROM students
+    WHERE 1=1
+    <if test="studentId != null">
+      AND id = #{studentId}
+    </if>
+    <if test="name != null">
+      AND full_name LIKE CONCAT('%', #{name}, '%')
+    </if>
+    <if test="furigana != null">
+      AND furigana LIKE CONCAT('%', #{furigana}, '%')
+    </if>
+    <if test="nickname != null">
+      AND nickname LIKE CONCAT('%', #{nickname}, '%')
+    </if>
+    <if test="liveCity != null">
+      AND live_city LIKE CONCAT('%', #{liveCity}, '%')
+    </if>
+    <if test="age != null">
+      AND age = #{age}
+    </if>
+    <if test="minAge != null">
+      AND age &gt;= #{minAge}
+    </if>
+    <if test="maxAge != null">
+      AND age &lt;= #{maxAge}
+    </if>
+    <if test="gender != null">
+      AND gender = #{gender}
+    </if>
+    <if test="isDeleted != null">
+      AND is_deleted = #{isDeleted}
+    </if>
   </select>
 
-  <!-- 受講生のコース情報(全件) -->
-  <select id="searchCourseList" resultType="raisetech.student.management.data.StudentCourse">
+  <!-- 受講生コース情報の一覧 -->
+  <select id="searchCourseList" parameterType="raisetech.student.management.dto.SearchCondition"
+    resultType="raisetech.student.management.data.StudentCourse">
     SELECT * FROM students_courses
+    WHERE 1=1
+    <if test="courseId != null">
+      AND id = #{courseId}
+    </if>
+    <if test="courseName != null">
+      AND course_name LIKE CONCAT('%', #{courseName}, '%')
+    </if>
+  </select>
+
+  <!-- コース申込状況の一覧 -->
+  <select id="searchStatusList" resultType="raisetech.student.management.data.CourseStatus">
+    SELECT * FROM course_status
+    WHERE 1=1
+    <if test="statusId != null">
+      AND id = #{statusId}
+    </if>
+    <if test="status != null">
+      AND application_status = #{status}
+    </if>
   </select>
 
   <!-- 受講生の新規登録(IDは自動採番) -->
@@ -32,21 +84,6 @@
     INSERT INTO course_status (course_id, application_status)
     VALUES (#{courseId}, #{applicationStatus})
   </insert>
-
-  <!-- 受講生検索(単一) -->
-  <select id="getStudentInfo" resultType="raisetech.student.management.data.Student">
-    SELECT * FROM students WHERE id = #{id}
-  </select>
-
-  <!-- 受講生に紐づくコース情報 -->
-  <select id="getCourseInfo" resultType="raisetech.student.management.data.StudentCourse">
-    SELECT * FROM students_courses WHERE student_id = #{studentId}
-  </select>
-
-  <!-- コース情報に紐づく申込状況 -->
-  <select id="getStatusInfo" resultType="raisetech.student.management.data.CourseStatus">
-    SELECT * FROM course_status WHERE course_id = #{courseId}
-  </select>
 
   <!-- 受講生の更新 -->
   <update id="updateStudent">

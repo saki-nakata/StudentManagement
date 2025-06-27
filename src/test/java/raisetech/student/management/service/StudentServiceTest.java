@@ -20,6 +20,7 @@ import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.CourseDetail;
 import raisetech.student.management.domain.StudentDetail;
+import raisetech.student.management.dto.SearchCondition;
 import raisetech.student.management.repository.StudentRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,32 +40,37 @@ class StudentServiceTest {
   private CourseStatus status;
   private CourseDetail courseDetail;
   private StudentDetail studentDetail;
+  private SearchCondition condition;
 
   @BeforeEach
   void before() {
     student = mock(Student.class);
     course = mock(StudentCourse.class);
     status = mock(CourseStatus.class);
-    courseDetail = mock(CourseDetail.class);
     studentDetail = mock(StudentDetail.class);
+    courseDetail = mock(CourseDetail.class);
+    condition = mock(SearchCondition.class);
   }
 
   @Test
-  void 受講生詳細の全件検索_リポジトリとコンバーターの一覧検索処理が適切に呼び出せていること() {
+  void 受講生詳細の条件検索_リポジトリとコンバーターの一覧検索処理が適切に呼び出せていること() {
     List<Student> studentList = List.of(student);
     List<StudentCourse> courseList = List.of(course);
-    List<CourseDetail> courseDetailList = List.of(courseDetail);
-    Mockito.when(repository.searchStudent()).thenReturn(studentList);
-    Mockito.when(repository.searchCourseList()).thenReturn(courseList);
-    Mockito.when(sut.mapToCourseDetailList(courseList)).thenReturn(courseDetailList);
+    List<CourseStatus> statusList = List.of(status);
+    boolean isCourseDetailConditionEmpty = true;
+    Mockito.when(repository.searchStudentList(condition)).thenReturn(studentList);
+    Mockito.when(repository.searchCourseList(condition)).thenReturn(courseList);
+    Mockito.when(repository.searchStatusList(condition)).thenReturn(statusList);
 
-    List<StudentDetail> actual = sut.searchStudentList();
+    List<StudentDetail> actual = sut.search(condition);
 
-    Mockito.verify(repository, times(1)).searchStudent();
-    Mockito.verify(repository, times(1)).searchCourseList();
-    Mockito.verify(sut, times(1)).mapToCourseDetailList(courseList);
-    Mockito.verify(converter, times(1)).convertStudentDetails(studentList, courseDetailList);
-    List<StudentDetail> expected = converter.convertStudentDetails(studentList, courseDetailList);
+    Mockito.verify(repository, times(1)).searchStudentList(condition);
+    Mockito.verify(repository, times(1)).searchCourseList(condition);
+    Mockito.verify(repository, times(1)).searchStatusList(condition);
+
+    List<StudentDetail> expected = converter.mapToStudentDetailList(studentList, courseList,
+        statusList, isCourseDetailConditionEmpty);
+
     assertThat(actual).isEqualTo(expected);
   }
 
@@ -133,41 +139,6 @@ class StudentServiceTest {
     Mockito.verify(course, times(1)).getId();
     Mockito.verify(repository, times(1)).registerStatus(status);
     assertThat(actual).isEqualTo(courseDetail);
-  }
-
-  @Test
-  void 受講生詳細の単一検索_リポジトリのIDに紐づく検索処理が呼び出されていること() {
-    int studentId = 999;
-    List<StudentCourse> courseList = List.of(course);
-    List<CourseDetail> courseDetailList = List.of(courseDetail);
-    Mockito.when(repository.getStudentInfo(studentId)).thenReturn(student);
-    Mockito.when(repository.getCourseInfo(studentId)).thenReturn(courseList);
-    Mockito.when(sut.mapToCourseDetailList(courseList)).thenReturn(courseDetailList);
-
-    StudentDetail expected = new StudentDetail(student, courseDetailList);
-
-    StudentDetail actual = sut.getStudentInfo(studentId);
-
-    Mockito.verify(repository, times(1)).getStudentInfo(studentId);
-    Mockito.verify(repository, times(1)).getCourseInfo(studentId);
-    Mockito.verify(sut, times(1)).mapToCourseDetailList(courseList);
-    assertThat(actual).isEqualTo(expected);
-  }
-
-  @Test
-  void コース詳細情報の設定_コースIDから申込状況を紐づけられていること() {
-    int courseId = 999;
-    List<StudentCourse> courseList = List.of(course);
-    Mockito.when(course.getId()).thenReturn(courseId);
-    Mockito.when(repository.getStatusInfo(courseId)).thenReturn(status);
-    CourseDetail courseDetail = new CourseDetail(course, status);
-
-    List<CourseDetail> expected = List.of(courseDetail);
-
-    List<CourseDetail> actual = sut.mapToCourseDetailList(courseList);
-
-    Mockito.verify(repository, times(1)).getStatusInfo(courseId);
-    assertThat(actual).isEqualTo(expected);
   }
 
   @Test

@@ -2,26 +2,23 @@ package raisetech.student.management.controller;
 
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.student.management.domain.CourseDetail;
-import raisetech.student.management.exception.ErrorMessage;
+import raisetech.student.management.dto.SearchCondition;
 import raisetech.student.management.exception.TestException;
 import raisetech.student.management.domain.StudentDetail;
 import raisetech.student.management.service.StudentService;
@@ -42,44 +39,21 @@ public class StudentController {
   }
 
   /**
-   * 受講生詳細一覧検索です。全件検索です。
+   * 受講生詳細の条件検索です。条件を指定しない場合は全件検索を行います。
    *
-   * @return 受講生詳細の一覧(全件)
+   * @param condition 検索条件
+   * @return 条件に一致した受講生詳細の一覧
    */
-  @Operation(summary = "一覧検索", description = "受講生の一覧を検索します。",
+  @Operation(summary = "受講生詳細の条件検索", description = "条件に一致する受講生詳細の一覧を検索します。",
       responses = {@ApiResponse(responseCode = "200", description = "成功",
           content = @Content(schema = @Schema(implementation = StudentDetail.class)))
       })
-  @GetMapping("/studentList")
-  public List<StudentDetail> getStudent() {
-    return service.searchStudentList();
+  @GetMapping("/search")
+  public List<StudentDetail> search(@ModelAttribute SearchCondition condition) {
+    return service.search(condition);
   }
 
-  /**
-   * 受講生検索です。IDに紐づく任意の受講生の情報を取得します。
-   *
-   * @param id 受講生ID
-   * @return 単一の受講生情報
-   */
-  @Operation(
-      summary = "受講生の取得",
-      description = "IDを指定して単一の受講生情報を取得します。",
-      parameters = {
-          @Parameter(name = "id", description = "受講生ID", required = true, example = "1")
-      },
-      responses = {
-          @ApiResponse(responseCode = "200", description = "成功"),
-          @ApiResponse(responseCode = "400", description = "例外発生",
-              content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-      }
-  )
-  @GetMapping("/student/{id}")
-  public StudentDetail getStudentInfo(
-      @PathVariable @Min(value = 1, message = "1以上の数値にしてください。") @Max(value = 999, message = "999以下の数値にしてください。") int id) {
-    return service.getStudentInfo(id);
-  }
-
-  /**
+   /**
    * 受講生詳細(受講生、コース情報、申込状況)の更新を行います。キャンセルフラグの更新も行います(論理削除)。
    *
    * @param studentDetail 受講生詳細

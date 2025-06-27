@@ -5,7 +5,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,6 +19,7 @@ import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -31,6 +31,7 @@ import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.CourseDetail;
 import raisetech.student.management.domain.StudentDetail;
+import raisetech.student.management.dto.SearchCondition;
 import raisetech.student.management.service.StudentService;
 
 @WebMvcTest(StudentController.class)
@@ -57,32 +58,69 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細の一覧検索_正常系_空の受講生リストが返されること() throws Exception {
-    mockMvc.perform(MockMvcRequestBuilders.get("/studentList"))
+  void 受講生詳細の全件検索_正常系_空の受講生リストが返されること() throws Exception {
+    mockMvc.perform(MockMvcRequestBuilders.get("/search"))
         .andExpect(status().isOk())
         .andExpect(content().json("[]"));
 
-    verify(service, times(1)).searchStudentList();
+    verify(service, times(1)).search(any(SearchCondition.class));
   }
 
   @Test
-  void 受講生情報の単一検索_正常系_有効なID指定でOKが返ること() throws Exception {
-    int id = 999;
-    mockMvc.perform(MockMvcRequestBuilders.get("/student/{id}", id))
-        .andExpect(status().isOk());
-
-    verify(service, times(1)).getStudentInfo(id);
-  }
-
-  @Test
-  void 受講生情報の単一検索_異常系_無効なID指定でBadRequestが返ること()
+  void 受講生詳細の条件検索_正常系_指定の受講生IDに一致した受講生詳細が返されること()
       throws Exception {
-    int id = 10000;
-    mockMvc.perform(MockMvcRequestBuilders.get("/student/{id}", id))
-        .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.statusValue").value(400))
-        .andExpect(jsonPath("$.statusName").value("BAD_REQUEST"))
-        .andExpect(jsonPath("$.message").value("getStudentInfo.id: 999以下の数値にしてください。"));
+    int studentId = 999;
+    Student student = new Student(studentId, "Raise Tech", "レイズ テック", "テッくん",
+        "RaiseTech@example.com", "日本", 30, "その他", "", false);
+    StudentCourse course = new StudentCourse(999, studentId, "Javaコース",
+        LocalDate.of(2019, 8, 15), LocalDate.of(2020, 2, 15));
+    CourseStatus status = new CourseStatus(999, 999, "受講終了");
+
+    SearchCondition condition = new SearchCondition();
+    condition.setStudentId(studentId);
+
+    Mockito.when(service.search(condition))
+        .thenReturn(List.of(new StudentDetail(student, List.of(new CourseDetail(course, status)))));
+
+    mockMvc.perform(
+            MockMvcRequestBuilders.get("/search").param("studentId", String.valueOf(studentId)))
+        .andExpect(status().isOk())
+        .andExpect(content().json("""
+            [
+               {
+                 "student": {
+                   "id": 999,
+                   "fullName": "Raise Tech",
+                   "furigana": "レイズ テック",
+                   "nickname": "テッくん",
+                   "emailAddress": "RaiseTech@example.com",
+                   "liveCity": "日本",
+                   "age": 30,
+                   "gender": "その他",
+                   "remark": "",
+                   "deleted": false
+                 },
+                 "courseDetailList": [
+                   {
+                     "studentCourse": {
+                       "id": 999,
+                       "studentId": 999,
+                       "courseName": "Javaコース",
+                       "startDate": "2019-08-15",
+                       "scheduledEndDate": "2020-02-15"
+                     },
+                     "courseStatus": {
+                       "id": 999,
+                       "courseId": 999,
+                       "applicationStatus": "受講終了"
+                     }
+                   }
+                 ]
+               }
+             ]
+            """));
+
+    verify(service, times(1)).search(any(SearchCondition.class));
   }
 
   @Test
