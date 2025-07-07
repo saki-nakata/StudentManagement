@@ -13,7 +13,7 @@ env:
   DEST_PATH: '/home/ec2-user/StudentManagement.jar'
 
 jobs:
-  build:
+  deploy:
 
     runs-on: ubuntu-latest
 
@@ -65,7 +65,7 @@ jobs:
           EnvironmentFile = /etc/sysconfig/StudentManagement
           Restart = no
           Type = simple
-          User ec2-user
+          User = ec2-user
           Group = ec2-user
           SuccessExitStatus = 143
           
